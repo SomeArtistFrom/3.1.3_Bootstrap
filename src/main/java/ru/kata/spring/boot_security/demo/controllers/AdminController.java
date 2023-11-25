@@ -34,13 +34,14 @@ public class AdminController {
     public String showAllUsers(Model model) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-//        User user = myUserDetailsService.findByUsername(userDetails.getUsername());
-        model.addAttribute("authorizedUser", userDetails);
-//        model.addAttribute("authorizedUser", userService.showOneUser(user.getId()));
+        User user = myUserDetailsService.findByUsername(userDetails.getUsername());
+//        model.addAttribute("authorizedUser", userDetails);
+        model.addAttribute("authorizedUser", userService.showOneUser(user.getId()));
 
         model.addAttribute("newUser", new User());
         model.addAttribute("users", userService.showAllUsers());
         model.addAttribute("allRoles", roleService.getAllRoles());
+
 
         return "admin";
     }
@@ -71,16 +72,25 @@ public class AdminController {
         model.addAttribute("user", userService.showOneUser(id));
         return "admin";
     }
-
-    @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") @Valid User user,
-                         BindingResult bindingResult, @PathVariable("id") int id) {
-        if (bindingResult.hasErrors()) {
-            return "admin";
-        }
-        userService.update(id, user);
+    @PostMapping("/update")
+    public String updateUser(@ModelAttribute User user) {
+        userService.update(user);
         return "redirect:/admin";
     }
+//    @PatchMapping("/{id}")
+//    public String update(@ModelAttribute("user") @Valid User user,
+//                         BindingResult bindingResult, @PathVariable("id") int id) {
+//        if (bindingResult.hasErrors()) {
+//            return "admin";
+//        }
+//        userService.update(id, user);
+//        return "redirect:/admin";
+//    }
+//    @PostMapping("/update")
+//    public String updateUser(@ModelAttribute User user) {
+//        userService.updateUser(user);
+//        return "redirect:/admin";
+//    }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") int id) {
